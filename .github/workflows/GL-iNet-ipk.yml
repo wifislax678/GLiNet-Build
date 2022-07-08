@@ -46,6 +46,9 @@ jobs:
         svn co https://github.com/coolsnowwolf/packages/trunk/multimedia/aliyundrive-fuse feeds/glinet/aliyundrive-fuse
         python3 setup.py -c config-wlan-ap-5.4.yml
         cd wlan-ap/openwrt
+        mkdir work && cd work
+        git clone https://github.com/gl-inet/glinet4.x.git
+        cd ..
         svn checkout https://github.com/coolsnowwolf/lede/trunk/tools/ucl tools/ucl
         svn checkout https://github.com/coolsnowwolf/lede/trunk/tools/upx tools/upx
         sed -i '/tools-y += patchelf pkgconf quilt squashfskit4 sstrip zip zlib zstd/a tools-y += ucl upx' tools/Makefile
@@ -59,13 +62,10 @@ jobs:
         echo "DISTRIB_DESCRIPTION='OpenWrt R22.7.1 '" >> package/base-files/files/etc/openwrt_release ##自定义版本显示
         sed -i 's/192.168.1.1/192.168.8.1/' package/base-files/files/bin/config_generate  ##修改默认IP
         sed -i 's/OpenWrt/AXT1800/' package/base-files/files/bin/config_generate ##修改主机名
-        mkdir work && cd work
-        git clone https://github.com/gl-inet/glinet4.x.git
-        cd ..
         ./scripts/gen_config.py target_wlan_ap-gl-axt1800-5-4 glinet_depends ##修改编译的设备类型
         #rm -rf feeds/liuran001_packages/luci-theme-argon
         echo -e "$(nproc) thread compile" ##action一般是二线程，所以比较慢些
-        make -j$(nproc) || make -j1 || make -j1 GL_PKGDIR=$pwd/work/glinet4.x/ipq60xx/ V=s
+        make -j$(expr $(nproc) + 1) || make -j1 || make -j1 GL_PKGDIR=$(pwd)/work/glinet4.x/ipq60xx/ V=s
         
     - name: Organize files
       id: organize
