@@ -39,7 +39,7 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH
         cd gl-infra-builder
-        python3 setup.py -c config-wlan-ap-5.4.yml
+        python3 setup.py -c config-wlan-ap.yml
         cd wlan-ap/openwrt
         git clone https://github.com/gl-inet/glinet4.x.git
         svn checkout https://github.com/coolsnowwolf/lede/trunk/tools/ucl tools/ucl
@@ -53,7 +53,7 @@ jobs:
         echo "DISTRIB_DESCRIPTION='OpenWrt R22.7.7 '" >> package/base-files/files/etc/openwrt_release ##自定义版本显示
         #sed -i 's/192.168.1.1/192.168.8.1/' package/base-files/files/bin/config_generate  ##修改默认IP
         sed -i 's/OpenWrt/AXT1800/' package/base-files/files/bin/config_generate ##修改主机名
-        ./scripts/gen_config.py target_wlan_ap-gl-axt1800-5-4 glinet_depends ##修改编译的设备类型
+        ./scripts/gen_config.py target_wlan_ap-gl-axt1800 glinet_depends ##修改编译的设备类型
         #rm -rf feeds/liuran001_packages/luci-theme-argon
         echo -e "$(nproc) thread compile" ##action一般是二线程，所以比较慢些
         echo -e "$(pwd)"
